@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>呪術廻戦 - 特级咒术师</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --jujutsu-black: #0a0a0a;
+            --jujutsu-dark: #1a1a2e;
+            --jujutsu-purple: #9d4edd;
+            --jujutsu-blue: #00d9ff;
+            --jujutsu-red: #ff006e;
+            --jujutsu-gold: #ffd700;
+        }
+        
+        * {
+            font-family: 'Noto Sans JP', sans-serif;
+        }
+        
+        body {
+            background: var(--jujutsu-black);
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* 领域展开背景效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(157, 78, 221, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 217, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 0, 110, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* 咒术符文装饰 */
+        .curse-mark {
+            position: fixed;
+            font-size: 20rem;
+            opacity: 0.03;
+            color: var(--jujutsu-purple);
+            pointer-events: none;
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .curse-mark:nth-child(1) { top: -10%; right: -10%; animation-delay: 0s; }
+        .curse-mark:nth-child(2) { bottom: -10%; left: -10%; animation-delay: 10s; transform: rotate(180deg); }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+        
+        /* 导航栏 - 领域展开风格 */
+        .navbar {
+            background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(26,26,46,0.9) 100%) !important;
+            border-bottom: 2px solid var(--jujutsu-purple);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.4);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--jujutsu-gold) !important;
+            text-shadow: 0 0 20px var(--jujutsu-gold);
+            letter-spacing: 3px;
+        }
+        
+        .navbar-brand::before {
+            content: '◈ ';
+            color: var(--jujutsu-red);
+        }
+        
+        .nav-link {
+            color: #fff !important;
+            font-weight: 700;
+            margin: 0 0.3rem;
+            padding: 0.6rem 1.2rem !important;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(157, 78, 221, 0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-link:hover::before {
+            left: 100%;
+        }
+        
+        .nav-link:hover {
+            border-color: var(--jujutsu-purple);
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.5);
+            color: var(--jujutsu-blue) !important;
+        }
+        
+        /* 选中状态 - 无量空处 */
+        .nav-item.active .nav-link {
+            background: linear-gradient(135deg, var(--jujutsu-purple), var(--jujutsu-blue));
+            border-color: var(--jujutsu-gold);
+            box-shadow: 0 0 25px rgba(157, 78, 221, 0.6);
+            color: #fff !important;
+        }
+        
+        .nav-item.active .nav-link::after {
+            content: ' ◆';
+            color: var(--jujutsu-gold);
+        }
+        
+        /* 移动端按钮 */
+        .navbar-toggler {
+            border: 2px solid var(--jujutsu-purple);
+            background: rgba(157, 78, 221, 0.2);
+        }
+        
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%239d4edd' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        
+        /* 英雄区域 - 领域展开 */
+        .domain-expansion {
+            position: relative;
+            padding: 6rem 0;
+            margin-bottom: 3rem;
+            background: 
+                radial-gradient(ellipse at center, rgba(157, 78, 221, 0.2) 0%, transparent 70%),
+                linear-gradient(180deg, transparent 0%, rgba(10,10,10,1) 100%);
+            overflow: hidden;
+        }
+        
+        .domain-expansion::before {
+            content: '領域展開';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8rem;
+            font-weight: 900;
+            color: transparent;
+            -webkit-text-stroke: 2px rgba(157, 78, 221, 0.2);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        .domain-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 
+                0 0 10px var(--jujutsu-purple),
+                0 0 30px var(--jujutsu-purple),
+                0 0 60px var(--jujutsu-blue);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .domain-subtitle {
+            color: var(--jujutsu-blue);
+            font-size: 1.3rem;
+            letter-spacing: 5px;
+            margin-top: 1rem;
+            text-shadow: 0 0 10px rgba(0, 217, 255, 0.5);
+        }
+        
+        /* 术式卡片 */
+        .technique-card {
+            background: linear-gradient(145deg, rgba(26,26,46,0.9), rgba(10,10,10,0.9));
+            border: 2px solid var(--jujutsu-purple);
+            border-radius: 15px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(157, 78, 221, 0.2);
+        }
+        
+        .technique-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--jujutsu-purple), var(--jujutsu-blue), var(--jujutsu-red));
+            border-radius: 15px;
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s;
+        }
+        
+        .technique-card:hover::before {
+            opacity: 0.5;
+            animation: border-glow 2s linear infinite;
+        }
+        
+        @keyframes border-glow {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(30deg); }
+        }
+        
+        .technique-card h2 {
+            color: var(--jujutsu-gold);
+            font-weight: 900;
+            border-bottom: 2px solid var(--jujutsu-purple);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .grade-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: linear-gradient(135deg, var(--jujutsu-purple), var(--jujutsu-red));
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.5);
+        }
+        
+        /* 咒力条 */
+        .curse-energy-bar {
+            width: 100%;
+            height: 25px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--jujutsu-purple);
+            margin: 1rem 0;
+        }
+        
+        .curse-energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--jujutsu-purple), var(--jujutsu-blue));
+            box-shadow: 0 0 20px var(--jujutsu-purple);
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .curse-energy-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 底部 - 封印 */
+        .seal-footer {
+            margin-top: 4rem;
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 2px solid var(--jujutsu-purple);
+            background: linear-gradient(180deg, transparent, rgba(157, 78, 221, 0.1));
+        }
+        
+        .seal-pattern {
+            color: var(--jujutsu-purple);
+            font-size: 2rem;
+            letter-spacing: 10px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 咒术符文背景 -->
+    <div class="curse-mark">呪</div>
+    <div class="curse-mark">術</div>
+
+    <!-- 固定导航栏 -->
+    <nav class="navbar navbar-expand-sm navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">JUJUTSU KAISEN</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="index.html">領域</a> 
+                    </li>          
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">術師</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="skill.html">術式</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="work.html">任務</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 领域展开区域 -->
+    <section class="domain-expansion">
+        <div class="container text-center">
+            <h1 class="domain-title">無量空処</h1>
+            <p class="domain-subtitle">ムリョウクウショ · 无限信息领域</p>
+            <span class="grade-badge mt-3">特级咒术师</span>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="technique-card">
+            <h2>⚡ 術式紹介</h2>
+            <p>欢迎来到咒术世界。这里记录着特级咒术师的领域展开、术式能力及任务执行记录。</p>
+            
+            <div class="mt-4">
+                <small class="text-muted">咒力输出</small>
+                <div class="curse-energy-bar">
+                    <div class="curse-energy-fill" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="technique-card">
+            <h2>📋 領域メニュー</h2>
+            <div class="row text-center mt-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="p-3 border border-purple rounded" style="border-color: var(--jujutsu-purple) !important;">
+                        <div style="font-size: 2rem;">👁️</div>
+                        <div class="mt-2" style="color: var(--jujutsu-blue);">術師档案</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="p-3 border rounded" style="border-color: var(--jujutsu-red) !important;">
+                        <div style="font-size: 2rem;">⚔️</div>
+                        <div class="mt-2" style="color: var(--jujutsu-red);">術式技能</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="p-3 border rounded" style="border-color: var(--jujutsu-gold) !important;">
+                        <div style="font-size: 2rem;">📜</div>
+                        <div class="mt-2" style="color: var(--jujutsu-gold);">任務记录</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="p-3 border rounded" style="border-color: var(--jujutsu-purple) !important;">
+                        <div style="font-size: 2rem;">🔮</div>
+                        <div class="mt-2" style="color: var(--jujutsu-purple);">咒具仓库</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="seal-footer">
+        <div class="seal-pattern">◈ ◆ ◈ ◆ ◈</div>
+        <p class="mt-3 text-muted">呪術廻戦 · 領域展開</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

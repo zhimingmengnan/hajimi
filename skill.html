@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>術式技能 - 呪術廻戦</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --jujutsu-black: #0a0a0a;
+            --jujutsu-dark: #1a1a2e;
+            --jujutsu-purple: #9d4edd;
+            --jujutsu-blue: #00d9ff;
+            --jujutsu-red: #ff006e;
+            --jujutsu-gold: #ffd700;
+        }
+        
+        * { font-family: 'Noto Sans JP', sans-serif; }
+        
+        body {
+            background: var(--jujutsu-black);
+            color: #fff;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(0, 217, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .curse-mark {
+            position: fixed;
+            font-size: 20rem;
+            opacity: 0.03;
+            color: var(--jujutsu-blue);
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .curse-mark:nth-child(1) { top: -10%; left: -10%; }
+        .curse-mark:nth-child(2) { bottom: -10%; right: -10%; transform: rotate(180deg); }
+        
+        .navbar {
+            background: linear-gradient(180deg, rgba(10,10,10,0.95) 0%, rgba(26,26,46,0.9) 100%) !important;
+            border-bottom: 2px solid var(--jujutsu-purple);
+            box-shadow: 0 0 30px rgba(157, 78, 221, 0.4);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--jujutsu-gold) !important;
+            text-shadow: 0 0 20px var(--jujutsu-gold);
+            letter-spacing: 3px;
+        }
+        
+        .navbar-brand::before { content: '◈ '; color: var(--jujutsu-red); }
+        
+        .nav-link {
+            color: #fff !important;
+            font-weight: 700;
+            margin: 0 0.3rem;
+            padding: 0.6rem 1.2rem !important;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .nav-link:hover {
+            border-color: var(--jujutsu-purple);
+            box-shadow: 0 0 15px rgba(157, 78, 221, 0.5);
+            color: var(--jujutsu-blue) !important;
+        }
+        
+        .nav-item.active .nav-link {
+            background: linear-gradient(135deg, var(--jujutsu-purple), var(--jujutsu-blue));
+            border-color: var(--jujutsu-gold);
+            box-shadow: 0 0 25px rgba(157, 78, 221, 0.6);
+        }
+        
+        .nav-item.active .nav-link::after { content: ' ◆'; color: var(--jujutsu-gold); }
+        
+        .navbar-toggler {
+            border: 2px solid var(--jujutsu-purple);
+            background: rgba(157, 78, 221, 0.2);
+        }
+        
+        .technique-header {
+            padding: 5rem 0;
+            background: linear-gradient(180deg, rgba(0,217,255,0.1) 0%, transparent 100%);
+            text-align: center;
+        }
+        
+        .technique-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--jujutsu-blue);
+            text-shadow: 0 0 30px var(--jujutsu-blue);
+        }
+        
+        .technique-card {
+            background: linear-gradient(145deg, rgba(26,26,46,0.9), rgba(10,10,10,0.9));
+            border: 2px solid var(--jujutsu-purple);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 217, 255, 0.3);
+            border-color: var(--jujutsu-blue);
+        }
+        
+        .technique-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .technique-name {
+            color: var(--jujutsu-gold);
+            font-weight: 900;
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .technique-type {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .type-domain { background: var(--jujutsu-purple); color: #fff; }
+        .type-cursed { background: var(--jujutsu-red); color: #fff; }
+        .type-basic { background: var(--jujutsu-blue); color: #000; }
+        
+        .power-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .power-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--jujutsu-blue), var(--jujutsu-purple));
+            box-shadow: 0 0 10px var(--jujutsu-blue);
+        }
+        
+        .seal-footer {
+            margin-top: 4rem;
+            padding: 3rem 0;
+            text-align: center;
+            border-top: 2px solid var(--jujutsu-blue);
+            background: linear-gradient(180deg, transparent, rgba(0, 217, 255, 0.1));
+        }
+    </style>
+</head>
+<body>
+
+    <div class="curse-mark">無</div>
+    <div class="curse-mark">下限</div>
+
+    <nav class="navbar navbar-expand-sm navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">JUJUTSU KAISEN</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon" style="background-image: url(&quot;data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%239d4edd' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e&quot;);"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">領域</a></li>          
+                    <li class="nav-item"><a class="nav-link" href="about.html">術師</a></li>
+                    <li class="nav-item active"><a class="nav-link" href="skill.html">術式</a></li>
+                    <li class="nav-item"><a class="nav-link" href="work.html">任務</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="technique-header">
+        <div class="container">
+            <h1 class="technique-title">術式一覧</h1>
+            <p style="color: var(--jujutsu-purple); letter-spacing: 3px;">JUTSUSHIKI ICHIRAN</p>
+        </div>
+    </section>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">👁️</div>
+                    <div class="technique-name">無下限呪術</div>
+                    <span class="technique-type type-cursed">生得術式</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">操纵无限的咒术，使攻击永远无法触及自己</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 100%"></div></div>
+                    <small style="color: var(--jujutsu-blue);">威力: ∞</small>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">🌌</div>
+                    <div class="technique-name">無量空処</div>
+                    <span class="technique-type type-domain">領域展開</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">将无限信息灌入对手大脑，使其无法行动</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 100%"></div></div>
+                    <small style="color: var(--jujutsu-purple);">必中效果</small>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">⚡</div>
+                    <div class="technique-name">虚式「茈」</div>
+                    <span class="technique-type type-cursed">秘伝</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">将"无限"的收敛与发散融合，产生巨大破坏</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 95%"></div></div>
+                    <small style="color: var(--jujutsu-red);">威力: 極大</small>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">🔴</div>
+                    <div class="technique-name">術式順転「蒼」</div>
+                    <span class="technique-type type-basic">基本術式</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">产生强大吸引力，将物体压缩</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 85%"></div></div>
+                    <small style="color: var(--jujutsu-blue);">威力: 大</small>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">🔵</div>
+                    <div class="technique-name">術式反転「赫」</div>
+                    <span class="technique-type type-basic">基本術式</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">产生强大排斥力，将物体弹飞</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 85%"></div></div>
+                    <small style="color: var(--jujutsu-red);">威力: 大</small>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="technique-card text-center">
+                    <div class="technique-icon">✋</div>
+                    <div class="technique-name">黑閃</div>
+                    <span class="technique-type type-cursed">奥義</span>
+                    <p style="color: #aaa; font-size: 0.9rem;">咒力与物理打击的误差在0.000001秒内产生的空间扭曲</p>
+                    <div class="power-bar"><div class="power-fill" style="width: 90%"></div></div>
+                    <small style="color: var(--jujutsu-gold);">威力: 2.5倍</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="seal-footer">
+        <div style="color: var(--jujutsu-blue); font-size: 2rem; letter-spacing: 10px; opacity: 0.5;">◈ ◆ ◈ ◆ ◈</div>
+        <p class="mt-3 text-muted">呪術廻戦 · 術式一覧</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
